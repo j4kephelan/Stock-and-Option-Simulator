@@ -1,5 +1,8 @@
 #include <iostream>
 #include <string>
+#include <vector>
+// #include <chrono>
+// #include <ctime> 
 #include "portfolio.hpp"
 
 namespace {
@@ -14,19 +17,16 @@ namespace {
         return answer;
     }
 }
-Bank::Bank() {
-    m_balance = 0;
-    std::string update;
-    m_history.push_back(update);
-}
 
-Bank::Bank(const int& starting_bal) {
+Account::Account(): m_balance(0) {}
+
+Account::Account(const int& starting_bal) {
     m_balance = starting_bal;
-    std::string update;
-    m_history.push_back(update);
+    // std::string update;
+    // m_history.push_back(update);
 }
 
-void Bank::deposit_funds(const int& deposit) {
+void Account::deposit_funds(const int& deposit) {
     char view_balance;
     m_balance += deposit;
 
@@ -43,7 +43,7 @@ void Bank::deposit_funds(const int& deposit) {
     }
 }
 
-void Bank::withdraw_funds(const int& withdrawal) {
+void Account::withdraw_funds(const int& withdrawal) {
     char view_balance;
     m_balance -= withdrawal;
 
@@ -60,10 +60,10 @@ void Bank::withdraw_funds(const int& withdrawal) {
     }
 }
 
-void Bank::view_history() {
+void Account::view_history() {
     std::cout << "ACCOUNT HISTORY: \n";
-    for (const std::string& event : m_history) {
-        std:: cout << event << "\n";
-    }
+    // for (const std::string& event : m_history) {
+    //     std:: cout << event << "\n";
+    // }
     std::cout << std::flush;
 }

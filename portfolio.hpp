@@ -1,23 +1,46 @@
-#ifndef STOCK_PORTFOLIO_
-#define STOCK_PORTFOLIO_
+#ifndef PORTFOLIO
+#define PORTFOLIO
 
-#include <vector>
-#include <string>
+class StockPortfolio;
+class Account;
+class Pricer;
 
-class Bank {
-public:
-    Bank();
-    Bank(const int& starting_bal);
+class StockPortfolio {
+    public:
+        StockPortfolio();
+        StockPortfolio(const int& starting_bal);
 
-    int check_balance() { return m_balance; };
-    void deposit_funds(const int& deposit);
-    void withdraw_funds(const int& withdrawal);
-    void view_history();
-
-
-private:
-    int m_balance;
-    std::vector<std::string> m_history;
+        void purchase(const std::string& stock, const int& volume);
+        void sell(const std::string& stock, const int& volume);
+        float checkFairPrice(const std::string& method, const std::string& stock);
+        float checkRealPrice(const std::string stock);
+        void marketCloses(); // time until market closes
+    
+    private:
+        Account m_cash;
 };
 
-#endif // BANK
+class Account {
+    public:
+        Account();
+        Account(const int& starting_bal);
+
+        float check_balance() { return m_balance; };
+        void deposit_funds(const int& deposit);
+        void withdraw_funds(const int& withdrawal);
+        void view_history();
+
+    private:
+        float m_balance;
+        std::vector<Transaction> m_history;
+};
+
+struct Transaction {
+    std::string time; // figure out how to get current time
+    std::string description;
+    float new_balance;
+};
+
+class Pricer {};
+
+#endif // PORTFOLIO
