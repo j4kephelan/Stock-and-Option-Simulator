@@ -1,6 +1,9 @@
 #ifndef PORTFOLIO
 #define PORTFOLIO
 
+class StockPortfolio;
+class Account;
+class Pricer;
 
 struct Transaction {
     std::string time; // figure out how to get current time
