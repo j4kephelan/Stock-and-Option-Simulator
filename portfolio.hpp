@@ -5,19 +5,10 @@ class StockPortfolio;
 class Account;
 class Pricer;
 
-class StockPortfolio {
-    public:
-        StockPortfolio();
-        StockPortfolio(const int& starting_bal);
-
-        void purchase(const std::string& stock, const int& volume);
-        void sell(const std::string& stock, const int& volume);
-        float checkFairPrice(const std::string& method, const std::string& stock);
-        float checkRealPrice(const std::string stock);
-        void marketCloses(); // time until market closes
-    
-    private:
-        Account m_cash;
+struct Transaction {
+    std::string time; // figure out how to get current time
+    std::string description;
+    float new_balance;
 };
 
 class Account {
@@ -35,12 +26,19 @@ class Account {
         std::vector<Transaction> m_history;
 };
 
-struct Transaction {
-    std::string time; // figure out how to get current time
-    std::string description;
-    float new_balance;
-};
+class StockPortfolio {
+    public:
+        StockPortfolio();
+        StockPortfolio(const int& starting_bal);
 
-class Pricer {};
+        void purchase(const std::string& stock, const int& volume);
+        void sell(const std::string& stock, const int& volume);
+        float checkFairPrice(const std::string& method, const std::string& stock);
+        float checkRealPrice(const std::string stock);
+        void marketCloses(); // time until market closes
+    
+    private:
+        Account m_cash;
+};
 
 #endif // PORTFOLIO

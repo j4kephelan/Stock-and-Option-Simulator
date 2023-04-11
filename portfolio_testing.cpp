@@ -25,4 +25,4 @@ TEST(test_account_withdrawal) {
     ASSERT_EQUAL(100-5, myBank.check_balance());
 }
 
-TEST_MAIN();
+TEST_MAIN()
