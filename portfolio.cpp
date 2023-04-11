@@ -11,7 +11,7 @@ namespace {
 
         char answer;
         std::cin >> answer;
-        if (answer != 'Y' || answer != 'N') {
+        if (answer != 'Y' && answer != 'N') {
             ask_again(question);
         }
         return answer;
