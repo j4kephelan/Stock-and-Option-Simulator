@@ -20,6 +20,7 @@ class Account {
         void deposit_funds(const int& deposit);
         void withdraw_funds(const int& withdrawal);
         void view_history();
+        void balance_update();
 
     private:
         float m_balance;
