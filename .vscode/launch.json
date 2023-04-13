@@ -6,8 +6,8 @@
       "type": "lldb",
       "request": "launch",
       "args": [],
-      "cwd": "/Users/jakephelan/GitHub/Stock-Portfolio-Simulation",
-      "program": "/Users/jakephelan/GitHub/Stock-Portfolio-Simulation/build/Debug/outDebug"
+      "cwd": "/Users/jakephelan/GitHub/Pricing-and-Trading-Simulation",
+      "program": "/Users/jakephelan/GitHub/Pricing-and-Trading-Simulation/build/Debug/outDebug"
     }
   ]
 }

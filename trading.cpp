@@ -5,7 +5,7 @@ double Pricer::norm_cdf(double x) {
     return (1.0 + std::erf(x / std::sqrt(2.0))) / 2.0;
 }
 
-double Pricer::black_scholes(const Stock& stock) {
+std::pair<double, double> Pricer::black_scholes_primer(const Stock& stock) {
     double stock_price = stock.underlying_price;
     double strike_price = stock.strike_price;
     double time_to_expiry = stock.expiration_time;
@@ -18,13 +18,25 @@ double Pricer::black_scholes(const Stock& stock) {
 
     double d2 = d1 - implied_volatility * std::sqrt(time_to_expiry);
 
-    double call_price = stock_price * norm_cdf(d1) - strike_price * 
-    std::exp(-risk_free_rate * time_to_expiry) * norm_cdf(d2);
+    std::pair<double, double> d1d2;
+    d1d2.first = d1;
+    d1d2.second = d2;
+
+    return d1d2;
+    }
+
+    double Pricer::black_scholes_call_price(const Stock& stock) {
+        std::pair<double, double> d1d2 = black_scholes_primer(stock);
+        double d1 = d1d2.first;
+        double d2 = d1d2.second;
+
+        double call_price = stock_price * norm_cdf(d1) - strike_price * 
+        std::exp(-risk_free_rate * time_to_expiry) * norm_cdf(d2);
+
+        return call_price;
+    }
 
     double put_price = strike_price * std::exp(-risk_free_rate * time_to_expiry) * norm_cdf(-d2) - stock_price * norm_cdf(-d1);
-
-
-    return call_price;
 }
 
     
