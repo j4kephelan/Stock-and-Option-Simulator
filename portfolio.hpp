@@ -1,30 +1,35 @@
 #ifndef PORTFOLIO
 #define PORTFOLIO
+#include <string>
+#include <vector>
 
 class StockPortfolio;
 class Account;
 class Pricer;
 
 struct Transaction {
-    std::string time; // figure out how to get current time
-    std::string description;
-    float new_balance;
+        std::string event_time; // figure out how to get current time
+        std::string description;
+        float new_balance;
 };
 
 class Account {
     public:
-        Account();
-        Account(const int& starting_bal);
+        std::shared_ptr<Transaction> record_event(const std::string& event_time, const std::string& descr);
 
-        float check_balance() { return m_balance; };
-        void deposit_funds(const int& deposit);
-        void withdraw_funds(const int& withdrawal);
-        void view_history();
-        void balance_update();
+        Account(); // done
+        Account(const double& starting_bal); // done
+
+        double check_balance() { return m_balance; }; // done
+        void deposit_funds(const double& deposit); // done
+        void withdraw_funds(const double& withdrawal); // done
+        std::vector<std::shared_ptr<Transaction>> get_history() { return m_history; }; // done
+        void view_history(); // done
+        void balance_update(); // idk
 
     private:
-        float m_balance;
-        std::vector<Transaction> m_history;
+        double m_balance;
+        std::vector<std::shared_ptr<Transaction>> m_history;
 };
 
 class StockPortfolio {

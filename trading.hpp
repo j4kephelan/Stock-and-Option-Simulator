@@ -15,13 +15,14 @@ struct Stock {
 class Pricer {
     public:
 
-    std::pair<double, double> black_scholes_primer(const Stock& stock);
-    double black_scholes_call_price(const Stock& stock);
-     double black_scholes_put_price(const Stock& stock);
-     
-    double get_real_price(const Stock& stock);
-    bool is_price_fair();
-    double norm_cdf(double x);
+        Stock get_stock_info(const string& name); // with data!
+        double norm_cdf(double x); // done
+        double Pricer::black_scholes(const Stock& stock, const string& option); // done?
+        double get_real_price(const Stock& stock); // with data!
+        bool is_price_fair(); // with data!
+
+    private:
+
 };
 
 #endif // TRADING
