@@ -28,18 +28,23 @@ namespace {
     }
 }
 
+TradingToolkit::TradingToolkit() {
+    vector<vector<string>> stock_data = read_csv("STOCK_DATA.csv");
+    map<string, float> prices;
+    for (const auto& row : stock_data) {
+        string symbol = row.at(0);
+        float price = stof(row.at(3));
+        prices.insert({symbol, price});
+    }
+    m_prices = prices;
+}
+
 double TradingToolkit::norm_cdf(double x) {
     return (1.0 + std::erf(x / std::sqrt(2.0))) / 2.0;
 }
 
 double TradingToolkit::get_current_price(/*const std::string& stock*/) {
-
-    auto hi = read_csv("STOCK_DATA.csv");
-    for (const auto& i : hi) {
-        cout << '+' << i.at(0) << '+' << endl;
-    }
-    double hilo = 0.00;
-    return hilo;
+    
 }
 
 // void TradingToolkit::buy_stock(const std::string& stock, const int& volume) {

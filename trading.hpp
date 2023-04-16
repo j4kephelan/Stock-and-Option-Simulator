@@ -24,6 +24,7 @@ struct BS_Eval {
 class TradingToolkit {
     public:
 
+        TradingToolkit();
         double get_current_price(/*const std::string& stock*/);
 
         // void buy_stock(const std::string& stock, const int& volume);
@@ -38,7 +39,7 @@ class TradingToolkit {
 
     private:
         // std::vector<std::string> m_pricing_history;
-        // std::map<std::string, double> m_market_prices;
+        std::map<std::string, float> m_prices;
 
         double norm_cdf(double x);
 
