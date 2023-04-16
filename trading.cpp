@@ -30,10 +30,10 @@ namespace {
 
 TradingToolkit::TradingToolkit() {
     vector<vector<string>> stock_data = read_csv("STOCK_DATA.csv");
-    map<string, float> prices;
+    map<string, string> prices;
     for (const auto& row : stock_data) {
         string symbol = row.at(0);
-        float price = stof(row.at(3));
+        string price = row.at(3);
         prices.insert({symbol, price});
     }
     m_prices = prices;
@@ -43,15 +43,11 @@ double TradingToolkit::norm_cdf(double x) {
     return (1.0 + std::erf(x / std::sqrt(2.0))) / 2.0;
 }
 
-double TradingToolkit::get_current_price(/*const std::string& stock*/) {
-    
-}
-
-// void TradingToolkit::buy_stock(const std::string& stock, const int& volume) {
+// double TradingToolkit::get_current_price(/*const std::string& option*/) {
 
 // }
 
-// void TradingToolkit::sell_stock(const std::string& stock, const int& volume) {
+// void TradingToolkit::sell_stock(const std::string& option, const int& volume) {
 
 // }
 
@@ -59,37 +55,37 @@ double TradingToolkit::get_current_price(/*const std::string& stock*/) {
 
 // }
 
-// Option TradingToolkit::get_option_info(const std::string& option) { // get stock struct from data to feed to black_scholes method
+// Option TradingToolkit::get_option_info(const std::string& option) { // get option struct from data to feed to black_scholes method
 
 // }
 
-// BS_Eval TradingToolkit::black_scholes(const Option& option) {
-//     // pull variables for equation out of stock struct
-//     double option_price = option.underlying_price;
-//     double strike_price = option.strike_price;
-//     double time_to_expiry = option.expiration_time;
-//     double risk_free_rate = option.interest_rate;
-//     double implied_volatility = option.volatility;
+BS_Eval TradingToolkit::black_scholes(const Option& option) {
+    // pull variables for equation out of option struct
+    double option_price = option.underlying_price;
+    double strike_price = option.strike_price;
+    double time_to_expiry = option.expiration_time;
+    double risk_free_rate = option.interest_rate;
+    double implied_volatility = option.volatility;
 
-//     // calculate d1 and d2 values
-//     double d1 = (std::log(option_price / strike_price) + (risk_free_rate +
-//      (implied_volatility * implied_volatility) / 2) * time_to_expiry) /
-//      (implied_volatility * std::sqrt(time_to_expiry));
+    // calculate d1 and d2 values
+    double d1 = (std::log(option_price / strike_price) + (risk_free_rate +
+     (implied_volatility * implied_volatility) / 2) * time_to_expiry) /
+     (implied_volatility * std::sqrt(time_to_expiry));
 
-//     double d2 = d1 - implied_volatility * std::sqrt(time_to_expiry);
+    double d2 = d1 - implied_volatility * std::sqrt(time_to_expiry);
 
-//     BS_Eval results;
-//     results.option_name = option.name;
+    BS_Eval results;
+    results.option_name = option.name;
 
-//     // return fair price of call option
-//     results.call_price = option_price * norm_cdf(d1) - strike_price * 
-//         std::exp(-risk_free_rate * time_to_expiry) * norm_cdf(d2);
-//     // return fair price of put option
-//     results.put_price = strike_price * std::exp(-risk_free_rate * time_to_expiry)
-//         * norm_cdf(-d2) - option_price * norm_cdf(-d1);
+    // return fair price of call option
+    results.call_price = option_price * norm_cdf(d1) - strike_price * 
+        std::exp(-risk_free_rate * time_to_expiry) * norm_cdf(d2);
+    // return fair price of put option
+    results.put_price = strike_price * std::exp(-risk_free_rate * time_to_expiry)
+        * norm_cdf(-d2) - option_price * norm_cdf(-d1);
 
-//     return results;
-// }
+    return results;
+}
 
 // bool TradingToolkit::is_price_fair() { // with data, idk if this is needed
 
@@ -99,4 +95,20 @@ double TradingToolkit::get_current_price(/*const std::string& stock*/) {
 
 // }
 
-    
+int main() {
+    TradingToolkit trading;
+    Option option;
+
+    option.name = "Example Stock";
+    option.underlying_price = 100.0;
+    option.strike_price = 95.0;
+    option.expiration_time = 0.5;
+    option.interest_rate = 0.05;
+    option.volatility = 0.2;
+
+    double call_price = (trading.black_scholes(option)).call_price;
+
+    std::cout << "Black-Scholes Call Option Price for " << option.name << ": " << call_price << std::endl;
+
+    return 0;
+}

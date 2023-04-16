@@ -30,7 +30,7 @@ Account::Account(): m_balance(0) {
     m_history.push_back(record_event(descr));
 }
 
-Account::Account(const double& starting_bal) {
+Account::Account(const float& starting_bal) {
     m_balance = starting_bal;
 
     string event_time = "now"; // fix this
@@ -38,16 +38,16 @@ Account::Account(const double& starting_bal) {
     m_history.push_back(record_event(descr));
 }
 
-void Account::deposit_funds(const double& deposit) {
+void Account::deposit_funds(const float& deposit) {
     m_balance += deposit;
 
     string event_time = "now";
-    string descr =to_string(deposit) + " added to account.";
+    string descr = to_string(deposit) + " added to account.";
     cout << descr << "**** **** HERE HERE *** " << endl;
     m_history.push_back(record_event(descr));
 }
 
-void Account::withdraw_funds(const double& withdrawal) {
+void Account::withdraw_funds(const float& withdrawal) {
     m_balance -= withdrawal;
 
     string event_time = "now";
@@ -63,11 +63,46 @@ void Account::view_history() {
     cout << flush;
 }
 
-StockPortfolio::StockPortfolio(const int& starting_bal) {
-
+StockPortfolio::StockPortfolio() {
+    Account empty_account;
+    m_cash = empty_account;
+    m_portfolio_val = 0;
 }
 
-int StockPortfolio::enumerate_ownership(const std::string& stock) { // how many do i own?
+StockPortfolio::StockPortfolio(const int& starting_bal) {
+    Account cash_account(starting_bal);
+    m_cash = cash_account;
+    m_portfolio_val = 0;
+}
+
+int StockPortfolio::enumerate_ownership(const std::string& symbol) { // how many do i own?
+    auto ownership_it = m_owned_stocks.find(symbol);
+    if (ownership_it == m_owned_stocks.end()) {
+        return 0;
+    } else {
+        return (*ownership_it).second;
+    }
+}
+
+void StockPortfolio::buy_stock(const std::string& symbol, const int& volume) {
+    map<string, string> prices = m_trading.get_prices();
+    auto stock_it = prices.find(symbol);
+    if (stock_it != prices.end()) {
+        float price = stof((*stock_it).second);
+        float cost = price*volume;
+        if (cost < m_cash.get_balance()) { // if you can afford
+            m_cash.withdraw_funds(cost); // paid
+            m_owned_stocks.insert({symbol, volume}); // acquired 
+        } // else {
+            // you can only afford x of these ... would you like to buy x? 
+        // }
+    } else {
+        cerr << "stock not found in our database" << endl;
+    }
+}
+
+void StockPortfolio::sell_stock(const std::string& symbol, const int& volume) {
+    int amount_owned = enumerate_ownership(symbol);
 
 }
 
