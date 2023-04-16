@@ -7,7 +7,7 @@
       "request": "launch",
       "args": [],
       "cwd": "/Users/jakephelan/GitHub/Pricing-and-Trading-Simulation",
-      "program": "/Users/jakephelan/GitHub/Pricing-and-Trading-Simulation/build/Debug/outDebug"
+      "program": "/Users/jakephelan/GitHub/Pricing-and-Trading-Simulation/a.out"
     }
   ]
 }
