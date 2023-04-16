@@ -2,8 +2,11 @@
 #define TRADING
 #include <string>
 #include <cmath>
+#include <vector>
+#include <map>
+#include "portfolio.hpp"
 
-struct Stock {
+struct Option {
     std::string name;
     double volatility;
     double underlying_price;
@@ -12,16 +15,33 @@ struct Stock {
     double interest_rate;
 };
 
-class Pricer {
-    public:
+struct BS_Eval {
+    std::string option_name;
+    double call_price;
+    double put_price;
+};
 
-        Stock get_stock_info(const string& name); // with data!
-        double norm_cdf(double x); // done
-        double Pricer::black_scholes(const Stock& stock, const string& option); // done?
-        double get_real_price(const Stock& stock); // with data!
-        bool is_price_fair(); // with data!
+class TradingToolkit {
+    public:
+        TradingToolkit(): m_pricing_history(), m_market_prices() {}
+
+        double get_current_price(/*const std::string& stock*/);
+
+        void buy_stock(const std::string& stock, const int& volume);
+        void sell_stock(const std::string& stock, const int& volume);
+
+        std::vector<std::string> budget(const double& price); // what can i afford for less than X per share
+
+        Option get_option_info(const std::string& name); // get stock struct from data to feed to black_scholes method
+        BS_Eval black_scholes(const Option& option); // done
+        bool is_price_fair(); // with data, idk if this is needed
+        std::string call_or_put(const Option& stock); // should i buy a call or put on this, idk if this is needed
 
     private:
+        std::vector<std::string> m_pricing_history;
+        std::map<std::string, double> m_market_prices;
+
+        double norm_cdf(double x);
 
 };
 

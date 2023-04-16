@@ -2,20 +2,18 @@
 #define PORTFOLIO
 #include <string>
 #include <vector>
-
-class StockPortfolio;
-class Account;
-class Pricer;
+#include <map>
+#include "trading.hpp"
 
 struct Transaction {
-        std::string event_time; // figure out how to get current time
+        char * event_time; // figure out how to get current time
         std::string description;
-        float new_balance;
+        double new_balance;
 };
 
 class Account {
     public:
-        std::shared_ptr<Transaction> record_event(const std::string& event_time, const std::string& descr);
+        std::shared_ptr<Transaction> record_event(const std::string& descr);
 
         Account(); // done
         Account(const double& starting_bal); // done
@@ -37,14 +35,18 @@ class StockPortfolio {
         StockPortfolio();
         StockPortfolio(const int& starting_bal);
 
-        void purchase(const std::string& stock, const int& volume);
-        void sell(const std::string& stock, const int& volume);
-        float checkFairPrice(const std::string& method, const std::string& stock);
-        float checkRealPrice(const std::string stock);
-        void marketCloses(); // time until market closes
-    
+        int enumerate_ownership(const std::string& stock); // how many do i own?
+
+        void add_to_watch_list(const std::string& stock);
+        void view_watch_list();
+        void clear_search_history();
+
     private:
         Account m_cash;
+        std::map<std::string, int> m_owned_stocks;
+        std::vector<std::string> m_watch_list;
+        double m_portfolio_val;
+        TradingToolkit m_trading;
 };
 
 #endif // PORTFOLIO
