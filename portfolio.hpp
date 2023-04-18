@@ -5,6 +5,7 @@
 #include <map>
 #include "trading.hpp"
 
+
 struct Transaction {
         char * event_time;
         std::string description;
@@ -35,25 +36,32 @@ class StockPortfolio {
         StockPortfolio(); // done
         StockPortfolio(const int& starting_bal); // done
 
-        int enumerate_ownership(const std::string& stock); // how many do i own? // done
+        int enumerate_ownership(const std::string& stock, const std::string& asset); // how many do i own? // done
 
         void buy_stock(const std::string& symbol, const int& volume); // done for now
         void sell_stock(const std::string& symbol, const int& volume);
 
+        void buy_option_contract(const std::string& name, const int& volume);
+        void sell_option_contract(const std::string& name, const int& volume);
+
         void add_to_watch_list(const std::string& stock);
-        void view_watch_list();
-        std::vector<Transaction> view_search_history();
-        void clear_search_history();
+        void view_watch_list(); 
+
+        void deposit_more_cash(const double& deposit);
+        void view_transaction_history();
+
+        void update_portfolio_val();
+        double get_portfolio_val() { return m_portfolio_val; }
 
     private:
         Account m_cash;
-        float m_portfolio_val;
+        double m_portfolio_val;
         
         TradingToolkit m_trading;
 
         std::map<std::string, int> m_owned_stocks;
-        std::vector<std::string> m_watch_list;
-        std::vector<Transaction> m_search_history;
+        std::map<std::string, int> m_owned_options;
+        std::map<std::string, double> m_watch_list;
 };
 
 #endif // PORTFOLIO

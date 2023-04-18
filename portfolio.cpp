@@ -1,4 +1,5 @@
 #include "portfolio.hpp"
+#include "trading.hpp"
 #include <iostream>
 #include <string>
 #include <vector>
@@ -25,7 +26,6 @@ shared_ptr<Transaction> Account::record_event(const string& descr) {
 Account::Account(): m_balance(0) {
     m_balance = 0;
 
-    string event_time = "now"; // fix this
     string descr = "Account created with initial balance of 0.";
     m_history.push_back(record_event(descr));
 }
@@ -33,7 +33,6 @@ Account::Account(): m_balance(0) {
 Account::Account(const float& starting_bal) {
     m_balance = starting_bal;
 
-    string event_time = "now"; // fix this
     string descr = "Account created with initial balance of " + to_string(starting_bal) + ".";
     m_history.push_back(record_event(descr));
 }
@@ -41,16 +40,13 @@ Account::Account(const float& starting_bal) {
 void Account::deposit_funds(const float& deposit) {
     m_balance += deposit;
 
-    string event_time = "now";
     string descr = to_string(deposit) + " added to account.";
-    cout << descr << "**** **** HERE HERE *** " << endl;
     m_history.push_back(record_event(descr));
 }
 
 void Account::withdraw_funds(const float& withdrawal) {
     m_balance -= withdrawal;
 
-    string event_time = "now";
     string descr = to_string(std::ceil(withdrawal*100)/100) + " withdrawn from account.";
     m_history.push_back(record_event(descr));
 }
@@ -75,63 +71,144 @@ StockPortfolio::StockPortfolio(const int& starting_bal) {
     m_portfolio_val = 0;
 }
 
-int StockPortfolio::enumerate_ownership(const std::string& symbol) { // how many do i own?
-    auto ownership_it = m_owned_stocks.find(symbol);
-    if (ownership_it == m_owned_stocks.end()) {
-        return 0;
+int StockPortfolio::enumerate_ownership(const string& symbol, const string& asset) {
+    if (asset == "stock") {
+        auto ownership_it = m_owned_stocks.find(symbol);
+        if (ownership_it == m_owned_stocks.end()) {
+            return 0;
+        } else {
+            return (*ownership_it).second;
+        }
+    } else if (asset == "option") {
+        auto ownership_it = m_owned_stocks.find(symbol);
+        if (ownership_it == m_owned_options.end()) {
+            return 0;
+        } else {
+            return (*ownership_it).second;
+        }
     } else {
-        return (*ownership_it).second;
+        throw invalid_argument("Enter stock or option.");
     }
 }
 
 void StockPortfolio::buy_stock(const std::string& symbol, const int& volume) {
+
     map<string, string> prices = m_trading.get_prices();
     auto stock_it = prices.find(symbol);
     if (stock_it != prices.end()) {
         float price = stof((*stock_it).second);
         float cost = price*volume;
-        if (cost < m_cash.get_balance()) { // if you can afford
-            m_cash.withdraw_funds(cost); // paid
-            m_owned_stocks.insert({symbol, volume}); // acquired 
-        } // else {
-            // you can only afford x of these ... would you like to buy x? 
-        // }
+        if (cost < m_cash.get_balance()) { 
+            string description = to_string(volume) + " shares of " + symbol + " bought.";
+            m_cash.record_event(description);
+            m_cash.withdraw_funds(cost); 
+            if (enumerate_ownership(symbol, "stock") == 0) {
+                m_owned_stocks.insert({symbol, volume}); 
+            } else {
+                m_owned_stocks.at(symbol) = m_owned_stocks.at(symbol) + volume;
+            }
+        } else {
+            throw invalid_argument("Insufficient funds.");
+        }
     } else {
-        cerr << "stock not found in our database" << endl;
+        throw invalid_argument("Stock does not exist in our database.");
     }
 }
 
 void StockPortfolio::sell_stock(const std::string& symbol, const int& volume) {
-    int amount_owned = enumerate_ownership(symbol);
+    int amount_owned = enumerate_ownership(symbol, "stock");
+    if (amount_owned >= volume) {
+        map<string, string> prices = m_trading.get_prices();
+        auto stock_it = prices.find(symbol);
+        double price = stod((*stock_it).second);
+        double profit = volume*price;
 
+        string description = to_string(volume) + " shares of " + symbol + " sold.";
+        m_cash.record_event(description);
+
+        m_cash.deposit_funds(profit);
+        m_owned_stocks.at(symbol) = amount_owned - volume;
+    } else if (amount_owned < volume) {
+        throw invalid_argument("Insufficient amount of stock owned.");
+    }
 }
 
-void StockPortfolio::add_to_watch_list(const std::string& stock) {
 
+void StockPortfolio::buy_option_contract(const std::string& name, const int& volume) {
+    if (m_trading.get_contract_price(name)) {
+        double price =  m_trading.get_contract_price(name) * volume;
+        if (m_cash.get_balance() >= price) {
+            int owned = enumerate_ownership(name, "option");
+
+            if (owned == 0) {
+                m_owned_options.insert({name, volume});
+            } else {
+                m_owned_options.at(name) = m_owned_options.at(name) + volume;
+            }
+            string description = to_string(volume) + " contracts of " + name + " bought.";
+            m_cash.record_event(description);
+            m_cash.withdraw_funds(price);
+        } else {
+            throw invalid_argument("Insufficient funds.");
+        }
+    } else {
+        throw invalid_argument("Option does not exist in our database.");
+    }
+}
+
+void StockPortfolio::sell_option_contract(const std::string& name, const int& volume) {
+    if (m_trading.get_contract_price(name)) {
+        int owned = enumerate_ownership(name, "option");
+        if (owned >= volume) {
+            double profit = m_trading.get_contract_price(name) * volume;
+            m_owned_options.at(name) = m_owned_options.at(name) - volume;
+            string description = to_string(volume) + " contracts of " + name + " sold.";
+            m_cash.record_event(description);
+            m_cash.deposit_funds(profit);
+        } else {
+            throw invalid_argument("Insufficient amount of options owned.");
+        }
+    } else {
+        throw invalid_argument("Option does not exist in our database.");
+    }
+}
+
+
+void StockPortfolio::add_to_watch_list(const std::string& stock) {
+    map<string, string> prices = m_trading.get_prices();
+    if (prices.find(stock) != prices.end()) {
+        m_watch_list.insert({stock, stod(prices.at(stock))});
+    } else {
+        throw invalid_argument("Stock does not exist in our database.");
+    }
 }
 
 void StockPortfolio::view_watch_list() {
-
+    for (const auto& watched : m_watch_list) {
+        cout << watched.first << ':' << watched.second << '\n';
+    }
+    cout << flush;
 }
 
-void StockPortfolio::clear_search_history() {
-    
+void StockPortfolio::deposit_more_cash(const double& deposit) {
+    m_cash.deposit_funds(deposit);
 }
 
-// void Account::balance_update() { // idk
+void StockPortfolio::view_transaction_history() {
+    m_cash.view_history();
+}
 
-//     char view_balance;
-
-//     std::string question = "Would you to view your balance after this transaction? Y/N";
-//     std::cout << "Your deposit has been completed. " << question << std::endl;
-//     std::cin >> view_balance;
-
-//     if (view_balance != 'Y' && view_balance != 'N') {
-//         //view_balance = ask_again(question);
-//     }
-
-//     if (view_balance == 'Y' || view_balance == 'y') {
-//         std::cout << "Your new balance is " << check_balance() << std::endl;
-//     }
-
-// }
+void StockPortfolio::update_portfolio_val() {
+    double val = 0;
+    for (const auto& stock : m_owned_stocks) {
+        double price = stod(m_trading.get_prices().at(stock.first));
+        int volume = stock.second;
+        val += price*volume;
+    }
+    for (const auto& option : m_owned_stocks) {
+        double price = m_trading.get_contract_price(option.first);
+        int volume = option.second;
+        val += price*volume;
+    }
+    m_portfolio_val = val;
+}
