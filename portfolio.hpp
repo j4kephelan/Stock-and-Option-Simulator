@@ -56,7 +56,10 @@ class StockPortfolio {
         double get_cash_balance() { return m_cash.get_balance(); }
 
         std::map<std::string, std::string> get_stock_prices() { return m_trading.get_prices(); }
+        void show_stocks() { m_trading.show_stocks(); }
         void price_option() { m_trading.option_eval(); }
+
+        void view_my_stocks();
 
     private:
         Account m_cash;

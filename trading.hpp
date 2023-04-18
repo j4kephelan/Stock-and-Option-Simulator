@@ -21,6 +21,7 @@ class TradingToolkit {
         void option_eval();
         BS_Eval black_scholes(const std::string& option_name); // done
         double get_contract_price(const std::string& option_name);
+        void show_stocks();
 
     private:
         // std::vector<std::string> m_pricing_history;

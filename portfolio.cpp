@@ -129,7 +129,7 @@ void StockPortfolio::sell_stock(const std::string& symbol, const int& volume) {
         m_cash.deposit_funds(profit);
         m_owned_stocks.at(symbol) = amount_owned - volume;
     } else if (amount_owned < volume) {
-        throw invalid_argument("Insufficient amount of stock owned.");
+        throw invalid_argument("Insufficient amount of " + symbol + " stock owned.");
     }
 }
 
@@ -204,15 +204,30 @@ void StockPortfolio::view_transaction_history() {
 
 void StockPortfolio::update_portfolio_val() {
     double val = 0;
-    for (const auto& stock : m_owned_stocks) {
-        double price = stod(m_trading.get_prices().at(stock.first));
-        int volume = stock.second;
-        val += price*volume;
+    if (m_owned_stocks.size() > 0) {
+        for (const auto& stock : m_owned_stocks) {
+            double price = stod(m_trading.get_prices().at(stock.first));
+            int volume = stock.second;
+            val += price*volume;
+        }
     }
-    for (const auto& option : m_owned_stocks) {
-        double price = m_trading.get_contract_price(option.first);
-        int volume = option.second;
-        val += price*volume;
+    if (m_owned_options.size() > 0) {
+        for (const auto& option : m_owned_stocks) {
+            double price = m_trading.get_contract_price(option.first);
+            int volume = option.second;
+            val += price*volume;
+        }
     }
     m_portfolio_val = val;
+}
+
+void StockPortfolio::view_my_stocks() {
+    if (m_owned_stocks.size() == 0) {
+        cout << "You own no stocks." << endl;
+    } else {
+        for (const auto& stock : m_owned_stocks) {
+            cout << stock.first << ":" << " " << stock.second << '\n';
+        }
+        cout << flush;
+    }
 }
