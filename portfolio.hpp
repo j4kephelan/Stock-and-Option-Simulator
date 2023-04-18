@@ -44,22 +44,26 @@ class StockPortfolio {
         void buy_option_contract(const std::string& name, const int& volume);
         void sell_option_contract(const std::string& name, const int& volume);
 
-        void add_to_watch_list(const std::string& stock);
-        void view_watch_list(); 
-
         void deposit_more_cash(const double& deposit);
         void withdraw_more_cash(const double& withdrawal);
         void view_transaction_history();
 
         void update_portfolio_val();
-        double get_portfolio_val() { return m_portfolio_val; }
+        double get_portfolio_val();
         double get_cash_balance() { return m_cash.get_balance(); }
 
         std::map<std::string, std::string> get_stock_prices() { return m_trading.get_prices(); }
         void show_stocks() { m_trading.show_stocks(); }
-        void price_option() { m_trading.option_eval(); }
-
+        void show_options() { m_trading.show_options(); }
+        double get_option_price(const std::string& option)
+            { return m_trading.get_contract_price(option); }
+        void eval_option() { m_trading.option_eval(); }
+        
+        std::vector<std::string> get_my_stocks();
+        std::vector<std::string> get_my_options();
+        
         void view_my_stocks();
+        void view_my_options();
 
     private:
         Account m_cash;

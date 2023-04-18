@@ -70,7 +70,7 @@ BS_Eval TradingToolkit::black_scholes(const string& option_name) {
         } 
     }
     if (!option_found) {
-        throw invalid_argument("Option not found !!!!!!!!!!!!!!!!!!!!!.");
+        throw invalid_argument("Option not found.");
     }
 
 
@@ -132,13 +132,24 @@ double TradingToolkit::get_contract_price(const string& option_name) {
 }
 
 void TradingToolkit::show_stocks() {
-    vector<vector<string>> testing = read_csv("STOCK_DATA.csv");
-    for (const auto& row : testing) {
+    vector<vector<string>> stock_data = read_csv("STOCK_DATA.csv");
+    for (const auto& row : stock_data) {
         if (row.at(0) == "ZTS") {
             cout << row.at(0);
+        } else if (row.at(0) != "Symbol") {
+            cout << row.at(0) << ',' << ' ';
         }
-        else if (row.at(0) != "Symbol") {
-            cout << row.at(0) << "," << " ";
+    }
+    cout << endl;
+}
+
+void TradingToolkit::show_options() {
+    vector<vector<string>> option_data = read_csv("Option_Data.csv");
+    for (const auto& row : option_data) {
+        if (row.at(0) == "AAPL_option_19_C") {
+            cout << row.at(0);
+        } else if (row.at(0) != "option_name") {
+            cout << row.at(0) << ',' << ' ';
         }
     }
     cout << endl;

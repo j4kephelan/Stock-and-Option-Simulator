@@ -173,23 +173,6 @@ void StockPortfolio::sell_option_contract(const std::string& name, const int& vo
     }
 }
 
-
-void StockPortfolio::add_to_watch_list(const std::string& stock) {
-    map<string, string> prices = m_trading.get_prices();
-    if (prices.find(stock) != prices.end()) {
-        m_watch_list.insert({stock, stod(prices.at(stock))});
-    } else {
-        throw invalid_argument("Stock does not exist in our database.");
-    }
-}
-
-void StockPortfolio::view_watch_list() {
-    for (const auto& watched : m_watch_list) {
-        cout << watched.first << ':' << watched.second << '\n';
-    }
-    cout << flush;
-}
-
 void StockPortfolio::deposit_more_cash(const double& deposit) {
     m_cash.deposit_funds(deposit);
 }
@@ -221,12 +204,44 @@ void StockPortfolio::update_portfolio_val() {
     m_portfolio_val = val;
 }
 
+double StockPortfolio::get_portfolio_val() {
+    update_portfolio_val();
+    return m_portfolio_val;
+}
+
+vector<string> StockPortfolio::get_my_stocks() {
+    vector<string> results;
+    for (const auto& stock : m_owned_stocks) {
+        results.push_back(stock.first);
+    }
+    return results;
+}
+
+vector<string> StockPortfolio::get_my_options() {
+    vector<string> results;
+    for (const auto& option : m_owned_options) {
+        results.push_back(option.first);
+    }
+    return results;
+}
+
 void StockPortfolio::view_my_stocks() {
     if (m_owned_stocks.size() == 0) {
         cout << "You own no stocks." << endl;
     } else {
         for (const auto& stock : m_owned_stocks) {
             cout << stock.first << ":" << " " << stock.second << '\n';
+        }
+        cout << flush;
+    }
+}
+
+void StockPortfolio::view_my_options() {
+    if (m_owned_options.size() == 0) {
+        cout << "You own no options." << endl;
+    } else {
+        for (const auto& option : m_owned_options) {
+            cout << option.first << ':' << ' ' << option.second << '\n';
         }
         cout << flush;
     }
