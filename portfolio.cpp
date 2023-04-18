@@ -194,6 +194,10 @@ void StockPortfolio::deposit_more_cash(const double& deposit) {
     m_cash.deposit_funds(deposit);
 }
 
+void StockPortfolio::withdraw_more_cash(const double& withdrawal) {
+    m_cash.withdraw_funds(withdrawal);
+}
+
 void StockPortfolio::view_transaction_history() {
     m_cash.view_history();
 }

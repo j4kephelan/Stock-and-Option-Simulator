@@ -40,10 +40,10 @@ TradingToolkit::TradingToolkit() {
 }
 
 double TradingToolkit::norm_cdf(double x) {
-    return (1.0 + std::erf(x / std::sqrt(2.0))) / 2.0;
+    return (1.0 + erf(x / sqrt(2.0))) / 2.0;
 }
 
-BS_Eval TradingToolkit::black_scholes(const std::string& option_name) {
+BS_Eval TradingToolkit::black_scholes(const string& option_name) {
 
 
     vector<vector<string>> option_data = read_csv("Option_Data.csv");
@@ -59,32 +59,26 @@ BS_Eval TradingToolkit::black_scholes(const std::string& option_name) {
 
 
     for (const auto& row : option_data) {
-
         if (row.at(0) == option_name) {
-
-        option_price = stod(row.at(1));
-        strike_price = stod(row.at(2));
-        time_to_expiry = stod(row.at(3));
-        risk_free_rate = stod(row.at(4));
-        implied_volatility = stod(row.at(5));
-        current_price = stod(row.at(6));
-        option_found = true;
+            option_price = stod(row.at(1));
+            strike_price = stod(row.at(2));
+            time_to_expiry = stod(row.at(3));
+            risk_free_rate = stod(row.at(4));
+            implied_volatility = stod(row.at(5));
+            current_price = stod(row.at(6));
+            option_found = true;
         } 
     }
+    if (!option_found) {
+        throw invalid_argument("Option not found.");
+    }
 
-    // if (!option_found) {
-    //     cout << "Option not found, try again" << flush; // exception -----------------------------------------------
-    // } else {
 
-
-    // pull variables for equation out of option struct
-
-    // calculate d1 and d2 values
-    double d1 = (std::log(option_price / strike_price) + (risk_free_rate +
+    double d1 = (log(option_price / strike_price) + (risk_free_rate +
      (implied_volatility * implied_volatility) / 2) * time_to_expiry) /
-     (implied_volatility * std::sqrt(time_to_expiry));
+     (implied_volatility * sqrt(time_to_expiry));
 
-    double d2 = d1 - implied_volatility * std::sqrt(time_to_expiry);
+    double d2 = d1 - implied_volatility * sqrt(time_to_expiry);
 
     BS_Eval results;
     results.option_name = option_name;
@@ -92,9 +86,9 @@ BS_Eval TradingToolkit::black_scholes(const std::string& option_name) {
 
     // return fair price of call option
     results.call_price = option_price * norm_cdf(d1) - strike_price * 
-        std::exp(-risk_free_rate * time_to_expiry) * norm_cdf(d2);
+        exp(-risk_free_rate * time_to_expiry) * norm_cdf(d2);
     // return fair price of put option
-    results.put_price = strike_price * std::exp(-risk_free_rate * time_to_expiry)
+    results.put_price = strike_price * exp(-risk_free_rate * time_to_expiry)
         * norm_cdf(-d2) - option_price * norm_cdf(-d1);
 
     return results;
@@ -107,26 +101,28 @@ void TradingToolkit::option_eval() {
 
     string desired_option;
 
-    cout << "Enter the name of an option you would like to evaluate: ";
+    cout << "We will use the Black-Scholes algorithm to price your option. "
+        << "Enter the name of the option you would like to evaluate: ";
     cin >> desired_option;
+
 
     double call_price = (black_scholes(desired_option)).call_price;
     double put_price = (black_scholes(desired_option)).put_price;
     double current_price = (black_scholes(desired_option)).current_price;
 
-    std::cout << "Black-Scholes Call Option Price for " << desired_option << ": " << call_price << std::endl;
-    std::cout << "Black-Scholes Put Option Price for " << desired_option << ": " << put_price << std::endl;
+    cout << "Black-Scholes Call Option Price for " << desired_option << ": " << call_price << endl;
+    cout << "Black-Scholes Put Option Price for " << desired_option << ": " << put_price << endl;
 
     if (current_price > call_price) {
-        std::cout << "The fair price is lower than current market price. This option may be overvalued. Sell." << std::endl; 
+        cout << "The fair price is lower than current market price. This option may be overvalued. Sell." << endl; 
     } else {
-        std::cout << "The fair price is greater than current market price. This option may be undervalued. Buy." << std::endl; 
+        cout << "The fair price is greater than current market price. This option may be undervalued. Buy." << endl; 
     }
 
     if (call_price > put_price) {
-        std::cout << "This indicates that the market is expecting this asset to increase in price, purchase call options." << std::endl;
+        cout << "This indicates that the market is expecting this asset to increase in price, purchase call options." << endl;
     } else {
-        std::cout << "This indicates that the market is expecting this asset to decrease in price, purchase put options." << std::endl;
+        cout << "This indicates that the market is expecting this asset to decrease in price, purchase put options." << endl;
     }
 
 }

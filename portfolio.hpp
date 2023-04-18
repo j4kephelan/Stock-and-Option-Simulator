@@ -48,10 +48,15 @@ class StockPortfolio {
         void view_watch_list(); 
 
         void deposit_more_cash(const double& deposit);
+        void withdraw_more_cash(const double& withdrawal);
         void view_transaction_history();
 
         void update_portfolio_val();
         double get_portfolio_val() { return m_portfolio_val; }
+        double get_cash_balance() { return m_cash.get_balance(); }
+
+        std::map<std::string, std::string> get_stock_prices() { return m_trading.get_prices(); }
+        void price_option() { m_trading.option_eval(); }
 
     private:
         Account m_cash;

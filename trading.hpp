@@ -5,9 +5,6 @@
 #include <vector>
 #include <map>
 
-
-
-
 struct BS_Eval {
     std::string option_name;
     double call_price;
@@ -21,7 +18,6 @@ class TradingToolkit {
         TradingToolkit();
         std::map<std::string, std::string> get_prices() { return m_prices; } // done
 
-        // std::vector<std::string> budget(const double& price); // what can i afford for less than X per share
         void option_eval();
         BS_Eval black_scholes(const std::string& option_name); // done
         double get_contract_price(const std::string& option_name);
