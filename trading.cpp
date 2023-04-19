@@ -145,10 +145,11 @@ void TradingToolkit::show_stocks() {
 
 void TradingToolkit::show_options() {
     vector<vector<string>> option_data = read_csv("Option_Data.csv");
+    option_data.erase(option_data.begin());
     for (const auto& row : option_data) {
         if (row.at(0) == "AAPL_option_19_C") {
             cout << row.at(0);
-        } else if (row.at(0) != "option_name") {
+        } else {
             cout << row.at(0) << ',' << ' ';
         }
     }
