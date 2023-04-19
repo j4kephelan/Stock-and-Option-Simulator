@@ -246,3 +246,13 @@ void StockPortfolio::view_my_options() {
         cout << flush;
     }
 }
+
+string StockPortfolio::get_stock_price(const std::string& stock) {
+    map<string, string> prices = get_stock_prices();
+    auto stock_it = prices.find(stock);
+    if (stock_it != prices.end()) {
+        return (*stock_it).second;
+    } else {
+        throw invalid_argument("Stock not found.");
+    }
+}

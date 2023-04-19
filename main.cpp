@@ -30,7 +30,8 @@ namespace {
 int main() {
     double starting_bal;
     cout << "Hello! Welcome to our Stock and Option simulator. "
-        << "What would you like your starting balance to be? " << flush;
+        << "\nWhat would you like your starting balance to be? "
+        << "Example: 100 or 100.00 --> " << flush;
     cin >> starting_bal;
 
     StockPortfolio yourPortfolio(starting_bal);
@@ -68,15 +69,12 @@ int main() {
                         cout << "What stock would you like to buy? " << endl;
                         cin >> stock_buy;
                     }
-
-                    double amount;
-                    cout << stock_buy << " currently costs "
-                    << yourPortfolio.get_stock_prices().at(stock_buy)
-                    << " per share.\nHow many shares would you like to buy?" << endl;
-                    cin >> amount;
-
-
                     try {
+                        double amount;
+                        string price = yourPortfolio.get_stock_price(stock_buy);
+                        cout << stock_buy << " currently costs " << price
+                        << " per share.\nHow many shares would you like to buy?" << endl;
+                        cin >> amount;
                         yourPortfolio.buy_stock(stock_buy, amount);
                         double val = yourPortfolio.get_portfolio_val();
                         cout << "Stock bought successfully." << '\n'

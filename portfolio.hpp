@@ -61,9 +61,11 @@ class StockPortfolio {
         
         std::vector<std::string> get_my_stocks();
         std::vector<std::string> get_my_options();
-        
+
         void view_my_stocks();
         void view_my_options();
+
+        std::string get_stock_price(const std::string& stock);
 
     private:
         Account m_cash;
