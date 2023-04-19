@@ -75,7 +75,6 @@ class StockPortfolio {
 
         std::map<std::string, int> m_owned_stocks;
         std::map<std::string, int> m_owned_options;
-        std::map<std::string, double> m_watch_list;
 };
 
 #endif // PORTFOLIO

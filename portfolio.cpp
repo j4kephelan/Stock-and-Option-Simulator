@@ -80,7 +80,7 @@ int StockPortfolio::enumerate_ownership(const string& symbol, const string& asse
             return (*ownership_it).second;
         }
     } else if (asset == "option") {
-        auto ownership_it = m_owned_stocks.find(symbol);
+        auto ownership_it = m_owned_options.find(symbol);
         if (ownership_it == m_owned_options.end()) {
             return 0;
         } else {
@@ -139,7 +139,6 @@ void StockPortfolio::buy_option_contract(const std::string& name, const int& vol
         double price =  m_trading.get_contract_price(name) * volume;
         if (m_cash.get_balance() >= price) {
             int owned = enumerate_ownership(name, "option");
-
             if (owned == 0) {
                 m_owned_options.insert({name, volume});
             } else {
@@ -166,7 +165,7 @@ void StockPortfolio::sell_option_contract(const std::string& name, const int& vo
             m_cash.record_event(description);
             m_cash.deposit_funds(profit);
         } else {
-            throw invalid_argument("Insufficient amount of options owned.");
+            throw invalid_argument("Insufficient amount of options owned.!!!");
         }
     } else {
         throw invalid_argument("Option does not exist in our database.");
@@ -189,16 +188,16 @@ void StockPortfolio::update_portfolio_val() {
     double val = 0;
     if (m_owned_stocks.size() > 0) {
         for (const auto& stock : m_owned_stocks) {
-            double price = stod(m_trading.get_prices().at(stock.first));
+            double price = stod(get_stock_price(stock.first));
             int volume = stock.second;
-            val += price*volume;
+            val = val + price*volume;
         }
     }
     if (m_owned_options.size() > 0) {
-        for (const auto& option : m_owned_stocks) {
-            double price = m_trading.get_contract_price(option.first);
+        for (const auto& option : m_owned_options) {
+            double price = m_trading.get_contract_price((option.first));
             int volume = option.second;
-            val += price*volume;
+            val = val + price*volume;
         }
     }
     m_portfolio_val = val;

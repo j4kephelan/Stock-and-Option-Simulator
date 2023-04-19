@@ -103,7 +103,11 @@ int main() {
                         << "How many contracts would you like to buy?" << endl;
                         cin >> amount;
                         yourPortfolio.buy_option_contract(option_buy, amount);
-                        cout << "Option contract bought successfully. " << endl;
+                        double val = yourPortfolio.get_portfolio_val();
+                        cout << "Option bought successfully." << '\n'
+                            << "New portfolio value: " << to_string(val) << '\n'
+                            << "New portfolio cash balance: "
+                            << to_string(yourPortfolio.get_cash_balance()) << endl;
                     } catch (exception& e) {
                         cout << e.what() << endl;
                     }
