@@ -7,6 +7,8 @@
 using namespace std;
 
 namespace {
+
+    // reads in stock/option data from a csv database
     vector<vector<string>> read_csv(const string& filename) {
         ifstream stock_file(filename);
         vector<vector<string>> contents;
@@ -28,6 +30,7 @@ namespace {
     }
 }
 
+// reads in stock data 
 TradingToolkit::TradingToolkit() {
     vector<vector<string>> stock_data = read_csv("STOCK_DATA.csv");
     map<string, string> prices;
@@ -46,6 +49,7 @@ double TradingToolkit::norm_cdf(double x) {
 BS_Eval TradingToolkit::black_scholes(const string& option_name) {
 
 
+    // reads in option data
     vector<vector<string>> option_data = read_csv("Option_Data.csv");
 
     string stored_option_name;
@@ -127,6 +131,7 @@ void TradingToolkit::option_eval() {
 
 }
 
+// gets option contract price, accounting that a contract includes 100 shares
 double TradingToolkit::get_contract_price(const string& option_name) {
     return 100*(black_scholes(option_name).current_price);
 }
