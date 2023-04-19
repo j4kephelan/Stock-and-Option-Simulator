@@ -6,6 +6,8 @@
 using namespace std;
 
 namespace {
+
+    // Intial pop-up main menu with directions for user input
     void main_menu() {
         cout << "What would you like to do? Enter a number 1-8." << '\n'
             << "Buy (1) | Sell (2) | Deposit (3) | "
@@ -13,6 +15,8 @@ namespace {
             << "View History (7) | Quit Simulation (8)" << endl;
     }
 
+    // helper to choose either a stock or an option given whether user is buying or 
+    // selling
     string stock_or_option(const string& choice) {
         cout << "Would you like to " + choice + " a stock or an option?" << endl;
         string asset;
@@ -27,15 +31,20 @@ namespace {
     }
 }
 
+// main execultable to run the simulator given user input
 int main() {
     double starting_bal;
+
+    // input starting balance 
     cout << "Hello! Welcome to our Stock and Option simulator. "
         << "\nWhat would you like your starting balance to be? "
         << "Example: 100 or 100.00 --> " << flush;
     cin >> starting_bal;
 
+    // make a portfolio given a starting balance
     StockPortfolio yourPortfolio(starting_bal);
 
+    // different choice options to interact with program
     enum Choice {
         Buy = 1,
         Sell = 2,
@@ -49,6 +58,7 @@ int main() {
 
     int selection = -1;
 
+    // reads in selection and runs necessary methods
     while (selection) {
         cout << "*******************************************************" << endl;
         main_menu();
